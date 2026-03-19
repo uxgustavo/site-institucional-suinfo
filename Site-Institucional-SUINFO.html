@@ -1,0 +1,3354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SUINFO · DPE-MA · Relatório Gerencial Jan–Fev 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================================
+   CUSTOM PROPERTIES — Mobile-first base values
+   ============================================================ */
+        :root {
+            /* Colors */
+            --deep: #091C35;
+            --navy: #0F2D50;
+            --navy-mid: #1B3A5C;
+            --blue: #2560A8;
+            --emerald: #1E7A48;
+            --emerald-l: #27A05F;
+            --gold: #B07D0A;
+            --gold-l: #E0A012;
+            --amber: #D4580E;
+            --red: #B22828;
+            --teal: #0E6E7E;
+            --purple: #5B3FA6;
+
+            /* Surfaces */
+            --bg: #EFF0F2;
+            --surface: #FFFFFF;
+            --surface-2: #F5F5F7;
+            --surface-3: #ECEFF3;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.45);
+
+            /* Sidebar */
+            --sidebar-w: 260px;
+            --sidebar-w-collapsed: 64px;
+            --sidebar-bg: #091C35;
+            --sidebar-item: rgba(255, 255, 255, 0.06);
+            --sidebar-active: rgba(255, 255, 255, 0.12);
+            --sidebar-text: rgba(255, 255, 255, 0.75);
+            --sidebar-muted: rgba(255, 255, 255, 0.35);
+
+            /* Text */
+            --text: #0D1421;
+            --text-2: #3A4456;
+            --text-3: #6E7A8A;
+            --text-inv: rgba(255, 255, 255, 0.9);
+
+            /* Borders */
+            --border: #D8DBE2;
+            --border-l: #EAEDF2;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+
+            /* Spacing */
+            --gap: 16px;
+
+            /* Transitions */
+            --tr: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            --tr-slow: 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================================
+   RESET & BASE — Mobile first
+   ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+   OVERLAY (mobile menu backdrop)
+   ============================================================ */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 90;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ============================================================
+   SIDEBAR
+   ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-w);
+            height: 100dvh;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transform: translateX(-100%);
+            transition: transform var(--tr-slow), width var(--tr-slow);
+            overflow: hidden;
+            will-change: transform, width;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* SIDEBAR COLLAPSED & HOVER STATES (Mobile-First / Global) */
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.hover-expanded {
+            width: var(--sidebar-w) !important;
+        }
+
+        .sidebar.collapsed .brand-text,
+        .sidebar.collapsed .period-badge div,
+        .sidebar.collapsed .nav-section-label,
+        .sidebar.collapsed .nav-item span:not(.nav-icon),
+        .sidebar.collapsed .nav-badge,
+        .sidebar.collapsed .sidebar-footer .user-name,
+        .sidebar.collapsed .sidebar-footer .user-role {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity var(--tr), visibility var(--tr);
+        }
+
+        .sidebar.hover-expanded .brand-text,
+        .sidebar.hover-expanded .period-badge div,
+        .sidebar.hover-expanded .nav-section-label,
+        .sidebar.hover-expanded .nav-item span:not(.nav-icon),
+        .sidebar.hover-expanded .nav-badge,
+        .sidebar.hover-expanded .sidebar-footer .user-name,
+        .sidebar.hover-expanded .sidebar-footer .user-role {
+            opacity: 1;
+            visibility: visible;
+            width: auto;
+            height: auto;
+            margin: initial;
+            padding: initial;
+            transition: opacity var(--tr-slow) 0.1s, visibility var(--tr-slow) 0.1s;
+        }
+
+        .sidebar.collapsed:not(.hover-expanded) .nav-item {
+            padding: 10px;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .sidebar.collapsed:not(.hover-expanded) .sidebar-brand {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+            gap: 0;
+        }
+
+        .sidebar.collapsed:not(.hover-expanded) .brand-icon img {
+            width: 38px;
+        }
+
+        /* Oculta o botão no estado recolhido estático para não sobrepor o layout */
+        .sidebar.collapsed:not(.hover-expanded) .collapse-btn {
+            display: none !important;
+        }
+
+        .sidebar.collapsed:not(.hover-expanded) .period-badge {
+            justify-content: center;
+            padding: 10px;
+            gap: 0;
+        }
+
+        .sidebar.collapsed:not(.hover-expanded) .sidebar-user {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed:not(.hover-expanded) .nav-item::before {
+            display: none;
+        }
+
+        .collapse-btn {
+            transition: transform var(--tr-slow), background var(--tr), opacity var(--tr);
+        }
+
+        .collapse-btn.rotate {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 20px 18px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-icon img {
+            width: 50px;
+            height: auto;
+            background: transparent;
+        }
+
+        .brand-text {
+            overflow: hidden;
+        }
+
+        .brand-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .brand-sub {
+            font-size: 10px;
+            color: var(--sidebar-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+
+        /* Period badge */
+        .period-badge {
+            margin: 12px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .period-icon {
+            font-size: 14px;
+        }
+
+        .period-label {
+            font-size: 11px;
+            color: var(--sidebar-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .period-val {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--sidebar-text);
+            margin-top: 1px;
+        }
+
+        /* Nav */
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+
+        .nav-section-label {
+            padding: 14px 18px 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--sidebar-muted);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            margin: 2px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--tr);
+            border: 1px solid transparent;
+            text-decoration: none;
+            color: var(--sidebar-text);
+            font-size: 13px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-item);
+            color: #FFFFFF;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(37, 96, 168, 0.35), rgba(14, 110, 126, 0.2));
+            border-color: rgba(37, 96, 168, 0.3);
+            color: #FFFFFF;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--blue), var(--teal));
+            border-radius: 0 2px 2px 0;
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            flex-shrink: 0;
+            transition: background var(--tr);
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(37, 96, 168, 0.4);
+        }
+
+        .nav-item:hover .nav-icon {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .nav-badge.green {
+            background: rgba(30, 122, 72, 0.4);
+            color: #6DE49A;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .nav-badge.gold {
+            background: rgba(176, 125, 10, 0.4);
+            color: #F0C040;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .nav-badge.red {
+            background: rgba(178, 40, 40, 0.35);
+            color: #F08080;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .sidebar-footer {
+            padding: 14px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--sidebar-text);
+        }
+
+        .user-role {
+            font-size: 10px;
+            color: var(--sidebar-muted);
+        }
+
+        /* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+        .app-layout {
+            display: flex;
+            min-height: 100dvh;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+   TOP BAR — Glassmorphism
+   ============================================================ */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            height: 60px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(1.8);
+            -webkit-backdrop-filter: blur(20px) saturate(1.8);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+        }
+
+        .hamburger {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(15, 45, 80, 0.08);
+            border: 1px solid var(--border-l);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: background var(--tr);
+            flex-shrink: 0;
+        }
+
+        .hamburger:hover {
+            background: rgba(15, 45, 80, 0.14);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--navy-mid);
+            border-radius: 2px;
+            transition: all var(--tr);
+        }
+
+        .topbar-title {
+            font-size: clamp(13px, 3.5vw, 16px);
+            font-weight: 700;
+            color: var(--navy);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .topbar-filters {
+            display: none;
+            /* hidden on mobile, shown @sm */
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all var(--tr);
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .filter-chip.active {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: #fff;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all var(--tr);
+        }
+
+        .action-btn:hover {
+            background: var(--navy);
+            color: #fff;
+            border-color: var(--navy);
+        }
+
+        /* ============================================================
+   PAGE CONTENT
+   ============================================================ */
+        .page-body {
+            flex: 1;
+            padding: var(--gap);
+            overflow-x: hidden;
+        }
+
+        /* Pages shown/hidden */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================================
+   SECTION HEADING
+   ============================================================ */
+        .section-heading {
+            margin-bottom: clamp(16px, 4vw, 28px);
+        }
+
+        .section-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--emerald);
+            margin-bottom: 6px;
+        }
+
+        .section-title {
+            font-size: clamp(20px, 5vw, 30px);
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1.15;
+            letter-spacing: -0.3px;
+        }
+
+        .section-sub {
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: var(--text-3);
+            margin-top: 4px;
+            font-style: italic;
+            font-family: 'Lora', serif;
+        }
+
+        /* ============================================================
+   KPI CARDS — Mobile first: 1 col → 2 col → 3 col → 4 col
+   ============================================================ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+            margin-bottom: clamp(16px, 4vw, 24px);
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border-l);
+            border-radius: 14px;
+            padding: clamp(16px, 3vw, 22px);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow var(--tr), transform var(--tr);
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+        }
+
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+            background: var(--kpi-color, var(--navy));
+        }
+
+        .kpi-card .kpi-glow {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--kpi-color, var(--navy)), transparent 70%);
+            opacity: 0.07;
+            pointer-events: none;
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .kpi-icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .kpi-trend {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .kpi-trend.up {
+            background: #E5F7ED;
+            color: var(--emerald);
+        }
+
+        .kpi-trend.down {
+            background: #FEE8E8;
+            color: var(--red);
+        }
+
+        .kpi-trend.neutral {
+            background: #F0F3F8;
+            color: var(--text-3);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-3);
+            margin-bottom: 6px;
+        }
+
+        .kpi-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(22px, 5vw, 30px);
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: var(--text-3);
+            line-height: 1.4;
+        }
+
+        /* ============================================================
+   CHART CARDS
+   ============================================================ */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+            margin-bottom: clamp(16px, 4vw, 24px);
+        }
+
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border-l);
+            border-radius: 14px;
+            padding: clamp(16px, 3vw, 22px);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .chart-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chart-card-title {
+            font-size: clamp(13px, 3vw, 15px);
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .chart-card-sub {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-top: 2px;
+        }
+
+        .chart-card-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--text-3);
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-sq {
+            width: 10px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        /* Aspect-ratio aware chart containers */
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .chart-wrap.ratio-2x1 {
+            aspect-ratio: 2 / 1;
+        }
+
+        .chart-wrap.ratio-4x3 {
+            aspect-ratio: 4 / 3;
+        }
+
+        .chart-wrap.ratio-1x1 {
+            aspect-ratio: 1 / 1;
+        }
+
+        .chart-wrap canvas {
+            position: absolute;
+            inset: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .donut-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .donut-wrap {
+            width: min(220px, 100%);
+        }
+
+        .donut-legend-list {
+            width: 100%;
+        }
+
+        .donut-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-l);
+            font-size: 12px;
+        }
+
+        .donut-legend-item:last-child {
+            border-bottom: none;
+        }
+
+        .donut-legend-label {
+            flex: 1;
+            color: var(--text-2);
+        }
+
+        .donut-legend-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .donut-legend-pct {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-left: 4px;
+        }
+
+        /* ============================================================
+   PROGRESS BARS
+   ============================================================ */
+        .progress-section {
+            margin-bottom: clamp(16px, 4vw, 24px);
+        }
+
+        .progress-item {
+            margin-bottom: 14px;
+        }
+
+        .progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+        }
+
+        .progress-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .progress-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .progress-pct {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .bar-track {
+            height: 7px;
+            background: var(--border-l);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--bar-color, var(--navy));
+            width: 0;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================================
+   TABLES — Responsive (scroll + sticky header)
+   ============================================================ */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border-l);
+            border-radius: 14px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            margin-bottom: clamp(16px, 4vw, 24px);
+        }
+
+        .table-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px 14px;
+            border-bottom: 1px solid var(--border-l);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .table-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .table-card-sub {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-top: 1px;
+        }
+
+        .table-scroll-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+        }
+
+        .table-scroll-wrap::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .table-scroll-wrap::-webkit-scrollbar-track {
+            background: var(--surface-3);
+        }
+
+        .table-scroll-wrap::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        table.resp {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 560px;
+            font-size: 13px;
+        }
+
+        table.resp thead th {
+            position: sticky;
+            top: 0;
+            background: var(--surface-3);
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        table.resp tbody td {
+            padding: 11px 16px;
+            border-bottom: 1px solid var(--border-l);
+            color: var(--text-2);
+            vertical-align: middle;
+        }
+
+        table.resp tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.resp tbody tr:hover td {
+            background: #F7F9FC;
+        }
+
+        table.resp td strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+   BADGES
+   ============================================================ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .badge.green {
+            background: #E4F7EC;
+            color: #1A6A39;
+        }
+
+        .badge.blue {
+            background: #E2EDFA;
+            color: #1A4D8F;
+        }
+
+        .badge.gold {
+            background: #FDF0D0;
+            color: #7A5200;
+        }
+
+        .badge.red {
+            background: #FEECEC;
+            color: #9B2020;
+        }
+
+        .badge.teal {
+            background: #E0F4F6;
+            color: #0A5A6A;
+        }
+
+        .badge.gray {
+            background: #ECEEF2;
+            color: #525870;
+        }
+
+        .badge.amber {
+            background: #FEF0E6;
+            color: #8A3400;
+        }
+
+        .badge::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* ============================================================
+   HIGHLIGHT BOXES
+   ============================================================ */
+        .highlight-box {
+            border-radius: 12px;
+            padding: clamp(14px, 3vw, 20px);
+            border-left: 4px solid;
+            margin-bottom: var(--gap);
+        }
+
+        .highlight-box.blue {
+            background: #EBF2FC;
+            border-color: var(--blue);
+        }
+
+        .highlight-box.green {
+            background: #E5F7ED;
+            border-color: var(--emerald);
+        }
+
+        .highlight-box.gold {
+            background: #FDF5E0;
+            border-color: var(--gold);
+        }
+
+        .highlight-box.red {
+            background: #FEECEC;
+            border-color: var(--red);
+        }
+
+        .highlight-box.teal {
+            background: #E0F4F6;
+            border-color: var(--teal);
+        }
+
+        .highlight-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .highlight-box p {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ============================================================
+   DIVIDER CARDS (Division headers)
+   ============================================================ */
+        .division-flag {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--surface);
+            border: 1px solid var(--border-l);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: clamp(16px, 4vw, 24px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .division-flag-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .division-flag-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: 0.3px;
+        }
+
+        .division-flag-chief {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+   PILLAR CARDS (DIR pillars)
+   ============================================================ */
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+            margin-bottom: clamp(16px, 4vw, 24px);
+        }
+
+        .pillar-card {
+            background: var(--surface);
+            border: 1px solid var(--border-l);
+            border-radius: 14px;
+            padding: clamp(16px, 3vw, 22px);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--tr);
+        }
+
+        .pillar-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .pillar-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .pillar-icon-row {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .pillar-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .pillar-card-lead {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pillar-list {
+            list-style: none;
+        }
+
+        .pillar-list li {
+            font-size: 12px;
+            color: var(--text-2);
+            padding: 6px 0 6px 14px;
+            border-bottom: 1px solid var(--border-l);
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .pillar-list li:last-child {
+            border-bottom: none;
+        }
+
+        .pillar-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--emerald);
+            font-size: 11px;
+        }
+
+        /* ============================================================
+   EVENT LIST
+   ============================================================ */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-item {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border-l);
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-date {
+            min-width: 100px;
+            max-width: 100px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-3);
+            background: var(--surface-3);
+            border-right: 1px solid var(--border-l);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .event-text {
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-2);
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ============================================================
+   CONCLUSION BLOCK
+   ============================================================ */
+        .conclusion-card {
+            background: linear-gradient(135deg, var(--deep) 0%, var(--navy-mid) 100%);
+            border-radius: 16px;
+            padding: clamp(24px, 5vw, 40px);
+            color: #fff;
+            margin-bottom: clamp(16px, 4vw, 24px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .conclusion-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(37, 96, 168, 0.3), transparent 70%);
+            pointer-events: none;
+        }
+
+        .conclusion-title {
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .conclusion-text {
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.75;
+            margin-bottom: 24px;
+        }
+
+        .conclusion-cols {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .conclusion-col h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 6px;
+        }
+
+        .conclusion-col p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.72);
+            line-height: 1.55;
+        }
+
+        /* ============================================================
+   STAT ROW (simple inline stats)
+   ============================================================ */
+        .stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: var(--gap);
+        }
+
+        .stat-item {
+            background: var(--surface);
+            border: 1px solid var(--border-l);
+            border-radius: 10px;
+            padding: 12px 18px;
+            flex: 1;
+            min-width: 120px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-item .sv {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(18px, 4vw, 22px);
+            font-weight: 600;
+            color: var(--navy);
+            display: block;
+        }
+
+        .stat-item .sl {
+            font-size: 11px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+   MEDIA QUERIES — @min-width (Mobile First) e max-width Fixes
+   ============================================================ */
+
+        /* ── Strict Mobile (≤768px) ── */
+        @media (max-width: 768px) {
+            .sidebar:not(.open) {
+                transform: translateX(-100%) !important;
+                display: none !important;
+            }
+
+            .sidebar-brand .brand-text,
+            .sidebar-brand .brand-title {
+                display: none !important;
+            }
+
+            .sidebar-brand {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                gap: 0 !important;
+            }
+        }
+
+        /* ── Small (≥480px) ── */
+        @media (min-width: 480px) {
+            :root {
+                --gap: 18px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .topbar-filters {
+                display: flex;
+            }
+
+            .donut-layout {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .donut-wrap {
+                width: min(180px, 45%);
+                flex-shrink: 0;
+            }
+
+            .donut-legend-list {
+                flex: 1;
+            }
+
+            .conclusion-cols {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ── Medium (≥768px) ── */
+        @media (min-width: 768px) {
+            :root {
+                --gap: 20px;
+            }
+
+            .pillar-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-grid.cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .conclusion-cols {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .event-date {
+                min-width: 130px;
+                max-width: 130px;
+            }
+        }
+
+        /* ── Large (≥1024px) — Sidebar visible ── */
+        @media (min-width: 1024px) {
+            :root {
+                --gap: 24px;
+            }
+
+            .sidebar {
+                transform: translateX(0) !important;
+                position: fixed;
+            }
+
+            .main-content {
+                margin-left: var(--sidebar-w);
+                transition: margin-left var(--tr-slow);
+            }
+
+            .sidebar.collapsed~.main-content {
+                margin-left: 80px;
+            }
+
+            .hamburger {
+                display: none;
+            }
+
+            .collapse-btn {
+                display: flex !important;
+            }
+
+            .kpi-grid.cols-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .kpi-grid.cols-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .chart-grid.cols-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* ── XLarge (≥1280px) ── */
+        @media (min-width: 1280px) {
+            :root {
+                --gap: 28px;
+            }
+
+            .page-body {
+                padding: var(--gap) clamp(20px, 3vw, 40px);
+            }
+        }
+
+        /* ============================================================
+   COLLAPSE BUTTON (desktop only)
+   ============================================================ */
+        .collapse-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            transition: background var(--tr);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* ============================================================
+   ANIMATIONS
+   ============================================================ */
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .kpi-value {
+            animation: countUp 0.5s ease both;
+        }
+
+        .kpi-card:nth-child(1) .kpi-value {
+            animation-delay: 0.05s;
+        }
+
+        .kpi-card:nth-child(2) .kpi-value {
+            animation-delay: 0.10s;
+        }
+
+        .kpi-card:nth-child(3) .kpi-value {
+            animation-delay: 0.15s;
+        }
+
+        .kpi-card:nth-child(4) .kpi-value {
+            animation-delay: 0.20s;
+        }
+
+        .kpi-card:nth-child(5) .kpi-value {
+            animation-delay: 0.25s;
+        }
+
+        .kpi-card:nth-child(6) .kpi-value {
+            animation-delay: 0.30s;
+        }
+
+        /* Scroll-in animation for chart cards */
+        .chart-card,
+        .table-card,
+        .pillar-card {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        .chart-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .chart-card:nth-child(2) {
+            animation-delay: 0.18s;
+        }
+
+        .pillar-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .pillar-card:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+
+        .pillar-card:nth-child(3) {
+            animation-delay: 0.19s;
+        }
+
+        .pillar-card:nth-child(4) {
+            animation-delay: 0.26s;
+        }
+
+        /* ============================================================
+   MISC UTILS
+   ============================================================ */
+        .row {
+            display: flex;
+            gap: var(--gap);
+            flex-wrap: wrap;
+        }
+
+        .row>* {
+            flex: 1;
+            min-width: min(260px, 100%);
+        }
+
+        .mt {
+            margin-top: var(--gap);
+        }
+
+        .mb {
+            margin-bottom: var(--gap);
+        }
+
+        .text-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .text-muted {
+            color: var(--text-3);
+        }
+
+        .fw-700 {
+            font-weight: 700;
+        }
+
+        p+p {
+            margin-top: 8px;
+        }
+
+        p {
+            color: var(--text-2);
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: var(--gap);
+        }
+
+        .chip {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all var(--tr);
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            border-color: var(--navy);
+            color: var(--navy);
+        }
+
+        .chip.active {
+            background: var(--navy);
+            color: #fff;
+            border-color: var(--navy);
+        }
+
+        /* ============================================================
+           AJUSTES MOBILE (Abertura perfeita no clique do hambúrguer)
+           ============================================================ */
+        @media (max-width: 1023px) {
+
+            /* 1. Sidebar com largura total ao abrir */
+            .sidebar.open {
+                width: var(--sidebar-w) !important;
+                transform: translateX(0) !important;
+            }
+
+            /* 2. Oculta texto da marca/seta e centraliza logo */
+            .sidebar.open .brand-text,
+            .sidebar.open .collapse-btn {
+                display: none !important;
+            }
+
+            .sidebar.open .sidebar-brand {
+                justify-content: center !important;
+            }
+
+            /* 3. Restaura textos e espaços que o modo recolhido havia zerado */
+            .sidebar.open .nav-item span:not(.nav-icon),
+            .sidebar.open .nav-section-label,
+            .sidebar.open .period-badge div {
+                opacity: 1 !important;
+                visibility: visible !important;
+                width: auto !important;
+                height: auto !important;
+                margin: initial !important;
+            }
+
+            /* 4. Restaura o layout exato dos botões (ícone + texto) */
+            .sidebar.open .nav-item {
+                justify-content: flex-start !important;
+                gap: 10px !important;
+                /* Devolve o espaço entre ícone e texto */
+                padding: 10px 14px !important;
+            }
+
+            /* 5. Empurra as badges (números) de volta para o canto direito */
+            .sidebar.open .nav-badge {
+                opacity: 1 !important;
+                visibility: visible !important;
+                width: auto !important;
+                height: auto !important;
+                margin-left: auto !important;
+                /* O segredo para alinhar à direita */
+                padding: 2px 7px !important;
+            }
+
+            /* 6. Alinhamento perfeito do bloco de Período */
+            .sidebar.open .period-badge {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 12px !important;
+                /* Espaço exato entre ícone e texto */
+                padding: 12px 16px !important;
+                text-align: left !important;
+            }
+
+            .sidebar.open .period-badge div {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                /* Força o texto a alinhar à esquerda */
+                margin: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ======= OVERLAY (mobile) ======= -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- ======= SIDEBAR ======= -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <img src="Logodpe.png" alt="Logo DPE-MA">
+            </div>
+            <div class="brand-text">
+                <div class="brand-title">SUINFO · DPE-MA</div>
+            </div>
+            <button class="collapse-btn" id="collapseBtn" title="Recolher sidebar">◀</button>
+        </div>
+
+        <!-- Period -->
+        <div class="period-badge">
+            <span class="period-icon">🗓️</span>
+            <div>
+                <div class="period-label">Período</div>
+                <div class="period-val">Jan–Fev 2026</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Visão Geral</div>
+            <a class="nav-item active" onclick="showPage('dashboard',this)">
+                <span class="nav-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section-label">Divisões</div>
+            <a class="nav-item" onclick="showPage('dad',this)">
+                <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg></span>
+                <span>Análise e Desenvolvimento</span>
+                <span class="nav-badge">251</span>
+            </a>
+            <a class="nav-item" onclick="showPage('dir',this)">
+                <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg></span>
+                <span>Infraestrutura e Redes</span>
+                <span class="nav-badge">69</span>
+            </a>
+            <a class="nav-item" onclick="showPage('dos',this)">
+                <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path
+                            d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                        </path>
+                    </svg></span>
+                <span>Operação e Suporte</span>
+                <span class="nav-badge">3327</span>
+            </a>
+
+            <div class="nav-section-label">Gestão</div>
+            <a class="nav-item" onclick="showPage('pendencias',this)">
+                <span class="nav-icon">⚠️</span>
+                <span>Pendências e Riscos</span>
+                <span class="nav-badge red">8</span>
+            </a>
+            <a class="nav-item" onclick="showPage('conclusao',this)">
+                <span class="nav-icon">📋</span>
+                <span>Próximos Passos</span>
+                <span class="nav-badge gold">8</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ======= MAIN CONTENT ======= -->
+    <div class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <button class="hamburger" id="hamburger" onclick="openSidebar()">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="topbar-title" id="topbarTitle">Dashboard · Supervisão de Informática</div>
+            <div class="topbar-filters" id="topbarFilters">
+                <button class="filter-chip active">Jan–Fev 2026</button>
+            </div>
+            <div class="topbar-actions">
+                <div class="action-btn" title="Exportar" onclick="window.print()">🖨️</div>
+            </div>
+        </header>
+
+        <!-- PAGE BODY -->
+        <main class="page-body">
+
+            <!-- ====================== PAGE: DASHBOARD ====================== -->
+            <section class="page active" id="page-dashboard">
+                <div class="section-heading">
+                    <div class="section-eyebrow">Relatório Gerencial Consolidado</div>
+                    <div class="section-title">Supervisão de Informática</div>
+                    <div class="section-sub">Defensoria Pública do Estado do Maranhão &nbsp;·&nbsp; Janeiro – Fevereiro
+                        2026</div>
+                </div>
+
+                <!-- KPIs principais -->
+                <div class="kpi-grid cols-4">
+                    <div class="kpi-card" style="--kpi-color:#2560A8">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">📨</div>
+                            <div class="kpi-trend down">▼ Fev</div>
+                        </div>
+                        <div class="kpi-label">Chamados Abertos</div>
+                        <div class="kpi-value">3.327</div>
+                        <div class="kpi-sub">Jan: 1.879 · Fev: 1.448</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#1E7A48">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">✅</div>
+                            <div class="kpi-trend up">70%</div>
+                        </div>
+                        <div class="kpi-label">Chamados Resolvidos</div>
+                        <div class="kpi-value">2.327</div>
+                        <div class="kpi-sub">TMA: 2 horas &nbsp;·&nbsp; 997 postergados</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#0E6E7E">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">💾</div>
+                            <div class="kpi-trend neutral">5 proj.</div>
+                        </div>
+                        <div class="kpi-label">Commits de Código</div>
+                        <div class="kpi-value">251</div>
+                        <div class="kpi-sub">40.088 linhas alteradas · 7 autores</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#B07D0A">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">🗺️</div>
+                            <div class="kpi-trend neutral">DIR</div>
+                        </div>
+                        <div class="kpi-label">Núcleos Mapeados</div>
+                        <div class="kpi-value">69</div>
+                        <div class="kpi-sub">15 em padrão Omada · 54 a atualizar</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid cols-3">
+                    <div class="kpi-card" style="--kpi-color:#1E7A48">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">🚀</div><span class="badge green">Entregue</span>
+                        </div>
+                        <div class="kpi-label">Sistemas em Produção</div>
+                        <div class="kpi-value">2</div>
+                        <div class="kpi-sub">Intranet (04/02) · Sist. de Estágio (25/02)</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#2560A8">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">📡</div><span class="badge blue">DIR</span>
+                        </div>
+                        <div class="kpi-label">Servidores Monitorados</div>
+                        <div class="kpi-value">9</div>
+                        <div class="kpi-sub">100% Zabbix + Grafana · APs 100% concluído</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#B07D0A">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">📅</div><span class="badge gold">DOS</span>
+                        </div>
+                        <div class="kpi-label">Eventos Apoiados</div>
+                        <div class="kpi-value">17</div>
+                        <div class="kpi-sub">9 ações sociais · 8 reuniões do Conselho</div>
+                    </div>
+                </div>
+
+                <!-- Charts row -->
+                <div class="chart-grid cols-2">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Chamados GLPI por Mês</div>
+                                <div class="chart-card-sub">Abertos, solucionados e postergados</div>
+                            </div>
+                            <div class="chart-card-legend">
+                                <div class="legend-item">
+                                    <div class="legend-sq" style="background:#0F2D50"></div>Abertos
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-sq" style="background:#1E7A48"></div>Resolvidos
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-sq" style="background:#D4580E"></div>Postergados
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-2x1">
+                            <canvas id="c_glpiOverview"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Commits por Projeto</div>
+                                <div class="chart-card-sub">Repositórios · Jan–Fev 2026</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-2x1">
+                            <canvas id="c_commits"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contratos + Conformidade -->
+                <div class="chart-grid cols-2">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Contratos · Chamados</div>
+                                <div class="chart-card-sub">Abertos vs. resolvidos por contrato DOS</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-4x3">
+                            <canvas id="c_contratos"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Conformidade de Rede · Núcleos</div>
+                                <div class="chart-card-sub">Switches padrão Omada vs. legados</div>
+                            </div>
+                        </div>
+                        <div class="donut-layout">
+                            <div class="donut-wrap ratio-1x1" style="position:relative;aspect-ratio:1/1">
+                                <canvas id="c_conformidade"></canvas>
+                            </div>
+                            <br>
+                            <div class="donut-legend-list">
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#1E7A48"></div><span
+                                        class="donut-legend-label">TP-Link TL-SG3452 (Omada)</span><span
+                                        class="donut-legend-val">15</span><span class="donut-legend-pct">21,7%</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#2560A8"></div><span
+                                        class="donut-legend-label">TP-Link outros modelos</span><span
+                                        class="donut-legend-val">22</span><span class="donut-legend-pct">31,9%</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#B22828"></div><span
+                                        class="donut-legend-label">Intelbras (legado)</span><span
+                                        class="donut-legend-val">20</span><span class="donut-legend-pct">29%</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#B07D0A"></div><span
+                                        class="donut-legend-label">D-Link (legado)</span><span
+                                        class="donut-legend-val">10</span><span class="donut-legend-pct">14,5%</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#5B3FA6"></div><span
+                                        class="donut-legend-label">Mistos</span><span
+                                        class="donut-legend-val">2</span><span class="donut-legend-pct">2,9%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====================== PAGE: DAD ====================== -->
+            <section class="page" id="page-dad">
+                <div class="section-heading">
+                    <div class="section-eyebrow">DAD · Divisão de Análise e Desenvolvimento</div>
+                    <div class="section-title">Desenvolvimento de Sistemas</div>
+                    <div class="section-sub">Chefe: João Carlos Rodrigues Ribeiro &nbsp;·&nbsp; 01/01 – 25/02/2026</div>
+                </div>
+
+                <div class="division-flag">
+                    <div class="division-flag-icon" style="background:linear-gradient(135deg,#1B3A5C,#0E6E7E)"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="#F7F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg></div>
+                    <div>
+                        <div class="division-flag-name">DAD – Divisão de Análise e Desenvolvimento</div>
+                        <div class="division-flag-chief">Chefe: João Carlos Rodrigues Ribeiro &nbsp;·&nbsp; Equipe: 7
+                            colaboradores</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid cols-3">
+                    <div class="kpi-card" style="--kpi-color:#1E7A48">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">💾</div>
+                        </div>
+                        <div class="kpi-label">Total de Commits</div>
+                        <div class="kpi-value">251</div>
+                        <div class="kpi-sub">Jan/01 a 25/Fev/2026</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#2560A8">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">📁</div>
+                        </div>
+                        <div class="kpi-label">Projetos Ativos</div>
+                        <div class="kpi-value">5</div>
+                        <div class="kpi-sub">Repositórios com contribuições</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#5B3FA6">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">👥</div>
+                        </div>
+                        <div class="kpi-label">Autores Ativos</div>
+                        <div class="kpi-value">7</div>
+                        <div class="kpi-sub">Desenvolvedores e estagiários</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid cols-3">
+                    <div class="kpi-card" style="--kpi-color:#1E7A48">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">➕</div>
+                        </div>
+                        <div class="kpi-label">Linhas Adicionadas</div>
+                        <div class="kpi-value">23.019</div>
+                        <div class="kpi-sub">Novas funcionalidades</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#B22828">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">➖</div>
+                        </div>
+                        <div class="kpi-label">Linhas Removidas</div>
+                        <div class="kpi-value">17.069</div>
+                        <div class="kpi-sub">Refatoração e limpeza</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#0E6E7E">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">🔄</div>
+                        </div>
+                        <div class="kpi-label">Total de Alterações</div>
+                        <div class="kpi-value">40.088</div>
+                        <div class="kpi-sub">Movimentação total de código</div>
+                    </div>
+                </div>
+
+                <div class="chart-grid cols-2">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Commits por Repositório</div>
+                                <div class="chart-card-sub">Contribuições por projeto</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-4x3"><canvas id="c_commitsDAD"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Linhas Alteradas por Projeto</div>
+                                <div class="chart-card-sub">Adições + remoções totais</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-4x3"><canvas id="c_linhas"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Atividades concluídas -->
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">✅ Atividades Concluídas</div>
+                            <div class="table-card-sub">Entregas realizadas e liberadas em produção no período</div>
+                        </div>
+                        <span class="badge green">2 entregas</span>
+                    </div>
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Sistema</th>
+                                    <th>Descrição</th>
+                                    <th>Data</th>
+                                    <th>Equipe</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Intranet – Novas Funcionalidades</strong></td>
+                                    <td>Módulos: Aniversariantes, Eventos, Publicações, Consulta de Documentos e
+                                        Contracheque</td>
+                                    <td><span class="text-mono">04/02/2026</span></td>
+                                    <td>João Ribeiro · Paulo Almeida</td>
+                                    <td><span class="badge green">Em produção</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sistema de Gestão de Estágio – 3ª etapa</strong></td>
+                                    <td>Relatórios, Dashboard, Emissão de Certificados/Declarações e Comunicações
+                                        Automáticas</td>
+                                    <td><span class="text-mono">25/02/2026</span></td>
+                                    <td>João Ribeiro · Paulo Almeida · Luis Silva · Leonardo Vasconselos · Magno Ribeiro
+                                    </td>
+                                    <td><span class="badge green">Em produção</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Atividades em andamento -->
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">⚙️ Atividades em Andamento</div>
+                            <div class="table-card-sub">Frentes de trabalho ativas no período</div>
+                        </div>
+                    </div>
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Atividade</th>
+                                    <th>Descrição</th>
+                                    <th>Responsável(is)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Implantação Sentry</strong></td>
+                                    <td>Instalação concluída. Parametrização para ingestão de logs em andamento.</td>
+                                    <td>João Ribeiro</td>
+                                    <td><span class="badge gold">Em andamento</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NovoSGA – ISO 9001</strong></td>
+                                    <td>Módulo implantado em 24/02. Período de validação de dados. Ateste previsto para
+                                        26/02.</td>
+                                    <td>João Ribeiro</td>
+                                    <td><span class="badge teal">Em validação</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kubernetes e Terraform</strong></td>
+                                    <td>Estudos técnicos e testes práticos para migração de infraestrutura.</td>
+                                    <td>João Ribeiro · Paulo Almeida</td>
+                                    <td><span class="badge gold">Em andamento</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Portal Público – Estágio</strong></td>
+                                    <td>Site público: FAQ, informativos, documentos e formulários integrados ao sistema.
+                                    </td>
+                                    <td>Vinicius Caldas · Luis Silva · L. Vasconselos · Magno Ribeiro</td>
+                                    <td><span class="badge blue">Levantamento</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Workshop GIRO (04–06/03)</strong></td>
+                                    <td>Levantamento de dados e preparação de apresentação para o Workshop de
+                                        Desenvolvimento.</td>
+                                    <td>João Ribeiro</td>
+                                    <td><span class="badge gold">Em preparação</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Correções Contracheque</strong></td>
+                                    <td>Mapeamento de inconsistências. Alinhamento pendente com Luan Alves.</td>
+                                    <td>João Ribeiro</td>
+                                    <td><span class="badge amber">Identificado</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====================== PAGE: DIR ====================== -->
+            <section class="page" id="page-dir">
+                <div class="section-heading">
+                    <div class="section-eyebrow">DIR · Divisão de Infraestrutura e Redes</div>
+                    <div class="section-title">Infraestrutura, Redes e Governança</div>
+                    <div class="section-sub">Chefe: Felipe Dias Corrêa &nbsp;·&nbsp; Janeiro – Fevereiro 2026</div>
+                </div>
+
+                <div class="division-flag">
+                    <div class="division-flag-icon" style="background:linear-gradient(135deg,#0E6E7E,#1E7A48)"><span
+                            class="nav-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="#F7F9FC" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                            </svg>
+                        </span></div>
+                    <div>
+                        <div class="division-flag-name">DIR – Divisão de Infraestrutura e Redes</div>
+                        <div class="division-flag-chief">Chefe: Felipe Dias Corrêa &nbsp;·&nbsp; Responsáveis técnicos:
+                            Gabriel Gomes · Reginaldo Marques · Lucas Jesus · Victor Silva</div>
+                    </div>
+                </div>
+
+                <!-- 4 Pilares -->
+                <div class="section-heading" style="margin-bottom:12px">
+                    <div class="section-eyebrow">Pilares Estratégicos</div>
+                </div>
+                <div class="pillar-grid">
+                    <div class="pillar-card">
+                        <div class="pillar-number">Pilar 01</div>
+                        <div class="pillar-icon-row">🛡️</div>
+                        <div class="pillar-card-title">Segurança Perimetral e Gestão de Acessos</div>
+                        <div class="pillar-card-lead">Líder: Gabriel Pereira Gomes</div>
+                        <ul class="pillar-list">
+                            <li>Reconfiguração e ajuste fino do Firewall de Borda</li>
+                            <li>Projeto de modernização do Captive Portal (LGPD)</li>
+                            <li>Gestão e otimização de Túneis VPN</li>
+                            <li>Integração telemétrica dos inversores solares</li>
+                            <li>Auditoria da malha CFTV (Intelbras Next)</li>
+                        </ul>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-number">Pilar 02</div>
+                        <div class="pillar-icon-row">🔧</div>
+                        <div class="pillar-card-title">Sustentação de Infraestrutura Crítica</div>
+                        <div class="pillar-card-lead">Líder: Reginaldo Flávio Assunção Marques</div>
+                        <ul class="pillar-list">
+                            <li>Migração de servidores críticos (BD, Web, Arquivos)</li>
+                            <li>Implementação de VLANs na Sede e Núcleos Regionais</li>
+                            <li>Planejamento arquitetônico para migração Serpro</li>
+                            <li>Capacitação avançada Firewall Palo Alto (PA-210)</li>
+                        </ul>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-number">Pilar 03</div>
+                        <div class="pillar-icon-row">📡</div>
+                        <div class="pillar-card-title">Substituição de Switches e Wi-Fi</div>
+                        <div class="pillar-card-lead">Líder: Lucas David Martins de Jesus</div>
+                        <ul class="pillar-list">
+                            <li>Switch substituído – Núcleo da Raposa (26/01)</li>
+                            <li>2 switches – Paço do Lumiar (28/01)</li>
+                            <li>Switch – São José de Ribamar (28/01)</li>
+                            <li>Switch – Casa da Mulher Brasileira (04/02)</li>
+                            <li>Inventário completo de 69 núcleos estaduais</li>
+                        </ul>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-number">Pilar 04</div>
+                        <div class="pillar-icon-row">📊</div>
+                        <div class="pillar-card-title">Modernização e Observabilidade</div>
+                        <div class="pillar-card-lead">Líder: Victor Coelho da Silva</div>
+                        <ul class="pillar-list">
+                            <li>Monitoramento de Access Points: 100% concluído</li>
+                            <li>Dashboards Grafana para 9 servidores: 90%</li>
+                            <li>Monitoramento Serviços Ext./Int.: 75% em andamento</li>
+                            <li>Manual de Observabilidade – Wiki BookStack</li>
+                            <li>Protocolo Geral de Atuação documentado</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Observabilidade progress -->
+                <div class="chart-card mb">
+                    <div class="chart-card-header">
+                        <div>
+                            <div class="chart-card-title">Progresso do Projeto de Observabilidade</div>
+                            <div class="chart-card-sub">Zabbix + Grafana · iniciado 15/11/2025 · 1º marco: 27/01/2026
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-wrap" style="aspect-ratio:3/1;min-height:120px"><canvas
+                            id="c_observabilidade"></canvas></div>
+                </div>
+
+                <!-- Inventário -->
+                <div class="chart-grid cols-2">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Distribuição por Fabricante</div>
+                                <div class="chart-card-sub">69 núcleos inventariados</div>
+                            </div>
+                        </div>
+                        <div class="donut-layout">
+                            <div class="donut-wrap" style="aspect-ratio:1/1;position:relative">
+                                <canvas id="c_fabricantes"></canvas>
+                            </div>
+                            <div class="donut-legend-list">
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#0F2D50"></div><span
+                                        class="donut-legend-label">Intelbras</span><span
+                                        class="donut-legend-val">20</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#1E7A48"></div><span
+                                        class="donut-legend-label">TP-Link TL-SG3452</span><span
+                                        class="donut-legend-val">15</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#2560A8"></div><span
+                                        class="donut-legend-label">TP-Link TL-SG1048</span><span
+                                        class="donut-legend-val">19</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#B07D0A"></div><span
+                                        class="donut-legend-label">D-Link</span><span class="donut-legend-val">10</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#5B3FA6"></div><span
+                                        class="donut-legend-label">Outros/Mistos</span><span
+                                        class="donut-legend-val">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Conformidade Omada</div>
+                                <div class="chart-card-sub">Padrão gerenciável vs. legados</div>
+                            </div>
+                        </div>
+                        <div class="donut-layout">
+                            <div class="donut-wrap" style="aspect-ratio:1/1;position:relative">
+                                <canvas id="c_omada"></canvas>
+                            </div>
+                            <div class="donut-legend-list">
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#1E7A48"></div><span
+                                        class="donut-legend-label">Padrão Omada (TL-SG3452)</span><span
+                                        class="donut-legend-val">15</span><span class="donut-legend-pct">21,7%</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="legend-dot" style="background:#B22828"></div><span
+                                        class="donut-legend-label">Necessitam atualização</span><span
+                                        class="donut-legend-val">54</span><span class="donut-legend-pct">78,3%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Servidores monitorados -->
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">Servidores com Dashboards Padronizados – Grafana</div>
+                            <div class="table-card-sub">9 nós com painéis reestruturados em operação assistida</div>
+                        </div><span class="badge green">90% concluído</span>
+                    </div>
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Servidor</th>
+                                    <th>Métricas Monitoradas</th>
+                                    <th>Ferramenta</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Servidor de Aplicações</strong></td>
+                                    <td>CPU, RAM, Processos Ativos, Tráfego de Rede</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidor de Banco de Dados</strong></td>
+                                    <td>Conexões, Uptime, I/O de Disco, Fila</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidor de Arquivos</strong></td>
+                                    <td>Espaço em Disco, Leitura/Escrita (I/O)</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidor de Domínio Principal</strong></td>
+                                    <td>AD (NTDS), DNS, DHCP, NTP, Falhas de Logon</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidor de Domínio Redundante</strong></td>
+                                    <td>CPU, RAM, Disco, Replicação DFSR</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidor de Imagens</strong></td>
+                                    <td>Tráfego de Rede, Latência de Disco</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidor Web – Portal DPE-MA</strong></td>
+                                    <td>Conexões Ativas, Tráfego Web In/Out</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidores de Digitalização e Impressão</strong></td>
+                                    <td>Spooler, LanmanServer</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Vocalização, Antivírus e RESTPKI</strong></td>
+                                    <td>Kaspersky Admin, Áudio SRV, Criptografia</td>
+                                    <td>Zabbix + Grafana</td>
+                                    <td><span class="badge green">Ativo</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="highlight-box blue">
+                    <div class="highlight-title">📖 Manual de Observabilidade – Wiki SUINFO (BookStack)</div>
+                    <p>Elaborado como inovação administrativa complementar ao projeto técnico: consolida as regras de
+                        negócio dos painéis, matriz de cores de alertas (Verde: UP / Vermelho: DOWN) e o Protocolo Geral
+                        de Atuação diferenciado por tipo de núcleo — diretrizes técnicas avançadas para polos com TI
+                        dedicada (Imperatriz, Timon, Ribamar) e linguagem não técnica para unidades sem suporte local.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ====================== PAGE: DOS ====================== -->
+            <section class="page" id="page-dos">
+                <div class="section-heading">
+                    <div class="section-eyebrow">DOS · Divisão de Operação e Suporte</div>
+                    <div class="section-title">Operação, Suporte e Contratos</div>
+                    <div class="section-sub">Responsável: Ronilson Costa &nbsp;·&nbsp; Janeiro – Fevereiro 2026</div>
+                </div>
+
+                <div class="division-flag">
+                    <div class="division-flag-icon" style="background:linear-gradient(135deg,#2560A8,#5B3FA6)"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="#F7F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                            <path
+                                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <div class="division-flag-name">DOS – Divisão de Operação e Suporte</div>
+                        <div class="division-flag-chief">Responsável: Ronilson Costa</div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid cols-4">
+                    <div class="kpi-card" style="--kpi-color:#2560A8">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">📨</div>
+                        </div>
+                        <div class="kpi-label">Chamados Abertos</div>
+                        <div class="kpi-value">3.327</div>
+                        <div class="kpi-sub">Jan: 1.879 · Fev: 1.448</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#1E7A48">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">✅</div>
+                        </div>
+                        <div class="kpi-label">Solucionados</div>
+                        <div class="kpi-value">2.327</div>
+                        <div class="kpi-sub">Taxa de resolução: 70%</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#D4580E">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">⏳</div>
+                        </div>
+                        <div class="kpi-label">Postergados</div>
+                        <div class="kpi-value">997</div>
+                        <div class="kpi-sub">Jan: 640 · Fev: 357</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color:#0E6E7E">
+                        <div class="kpi-glow"></div>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrap">⏱️</div>
+                        </div>
+                        <div class="kpi-label">Tempo Médio Resolução</div>
+                        <div class="kpi-value">2h</div>
+                        <div class="kpi-sub">Consistente nos dois meses</div>
+                    </div>
+                </div>
+
+                <div class="chart-grid cols-2">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Atendimentos por Mês</div>
+                                <div class="chart-card-sub">Evolução Jan vs. Fev 2026</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-2x1"><canvas id="c_glpiMensal"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div>
+                                <div class="chart-card-title">Taxa de Resolução</div>
+                                <div class="chart-card-sub">Solucionados vs. postergados por mês</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrap ratio-2x1"><canvas id="c_resolucao"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Contratos -->
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">Contratos Gerenciados</div>
+                            <div class="table-card-sub">Desempenho operacional por contrato no período</div>
+                        </div>
+                    </div>
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Contrato</th>
+                                    <th>Volume</th>
+                                    <th>Chamados Abertos</th>
+                                    <th>Chamados Resolvidos</th>
+                                    <th>TMA</th>
+                                    <th>Resolução</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Locação de Impressoras - Technocopy</strong></td>
+                                    <td>153 multifuncionais</td>
+                                    <td class="text-mono">180</td>
+                                    <td class="text-mono">180</td>
+                                    <td>São Luís: 8h · Interior: 40h</td>
+                                    <td><span class="badge green">100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PCaaS - Contrato Voke</strong></td>
+                                    <td>134 de 1.000 computadores · 17 de 500 monitores</td>
+                                    <td class="text-mono">02</td>
+                                    <td class="text-mono">02</td>
+                                    <td>40 horas · 5 substituídos</td>
+                                    <td><span class="badge green">100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PCaaS - Contrato Lebre</strong></td>
+                                    <td>781 kits · 150 monitores</td>
+                                    <td class="text-mono">215</td>
+                                    <td class="text-mono">192</td>
+                                    <td>50 horas</td>
+                                    <td><span class="badge gold">89%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefonia Institucional</strong></td>
+                                    <td>250 linhas</td>
+                                    <td class="text-mono">63</td>
+                                    <td class="text-mono">39</td>
+                                    <td>250 linhas ativas/desativas</td>
+                                    <td><span class="badge amber">62%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Plano de ação -->
+                <div class="chart-card mb">
+                    <div class="chart-card-header">
+                        <div>
+                            <div class="chart-card-title">Plano de Ação TI 2026 – Status por Iniciativa</div>
+                            <div class="chart-card-sub">11 iniciativas · 5 em andamento · 6 não iniciadas · 0 concluídas
+                            </div>
+                        </div><span class="badge gold">Em execução</span>
+                    </div>
+
+                    <div class="kpi-grid cols-4" style="margin-bottom:16px">
+                        <div style="background:var(--surface-3);border-radius:8px;padding:12px;text-align:center">
+                            <div class="text-mono fw-700" style="font-size:20px;color:var(--navy)">11</div>
+                            <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px">
+                                Total</div>
+                        </div>
+                        <div style="background:#E5F7ED;border-radius:8px;padding:12px;text-align:center">
+                            <div class="text-mono fw-700" style="font-size:20px;color:var(--emerald)">5</div>
+                            <div
+                                style="font-size:10px;color:var(--emerald);text-transform:uppercase;letter-spacing:1px">
+                                Em andamento</div>
+                        </div>
+                        <div style="background:#ECEEF2;border-radius:8px;padding:12px;text-align:center">
+                            <div class="text-mono fw-700" style="font-size:20px;color:var(--text-3)">6</div>
+                            <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px">
+                                Não iniciadas</div>
+                        </div>
+                        <div style="background:#FEECEC;border-radius:8px;padding:12px;text-align:center">
+                            <div class="text-mono fw-700" style="font-size:20px;color:var(--red)">2</div>
+                            <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:1px">Em
+                                risco</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Padronização do Notion</span>
+                                <div class="progress-meta"><span class="badge gold">andamento</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B07D0A;width:50%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Padronização da Comunicação de
+                                    TI</span>
+                                <div class="progress-meta"><span class="badge gold">andamento</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B07D0A;width:45%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Fortalecimento da Wiki</span>
+                                <div class="progress-meta"><span class="badge gold">andamento</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B07D0A;width:40%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Organização da Escala de
+                                    Viagens</span>
+                                <div class="progress-meta"><span class="badge gold">andamento</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B07D0A;width:35%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Especialização do Suporte
+                                    Técnico</span>
+                                <div class="progress-meta"><span class="badge gold">andamento</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B07D0A;width:30%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Capacitação de Usuários</span>
+                                <div class="progress-meta"><span class="badge red">em risco</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B22828;width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Atualização de Formulários
+                                    GLPI</span>
+                                <div class="progress-meta"><span class="badge red">em risco</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#B22828;width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Organização das Equipes N1</span>
+                                <div class="progress-meta"><span class="badge gray">não iniciado</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#8A90A0;width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Criação da Tabela de SLA</span>
+                                <div class="progress-meta"><span class="badge gray">não iniciado</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#8A90A0;width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Padronização Demandas de Rede</span>
+                                <div class="progress-meta"><span class="badge gray">não iniciado</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#8A90A0;width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-row"><span class="progress-label">Avaliação de Estagiários</span>
+                                <div class="progress-meta"><span class="badge gray">não iniciado</span></div>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="--bar-color:#8A90A0;width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agenda -->
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">Agenda de Ações Sociais e Eventos</div>
+                            <div class="table-card-sub">9 ações sociais · 8 reuniões do Conselho · Apoio tecnológico e
+                                logístico</div>
+                        </div>
+                    </div>
+                    <div class="event-list">
+                        <div class="event-item">
+                            <div class="event-date">26–27/01</div>
+                            <div class="event-text">Lago da Pedra – Ação Social</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">30/01</div>
+                            <div class="event-text">São Luís – Beira Mar (Centro de Acolhimento PopRuaJud)</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">13/01</div>
+                            <div class="event-text">Reunião do Conselho Superior</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">23/01</div>
+                            <div class="event-text">Posse e 202ª Sessão Ordinária do Conselho Superior</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">29/01</div>
+                            <div class="event-text">274ª Sessão Extraordinária do Conselho (x2)</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">05–06/02</div>
+                            <div class="event-text">São Luís – Evento no TRE</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">09–11/02</div>
+                            <div class="event-text">Raposa – Projeto "Te Alui Mulher"</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">09/02</div>
+                            <div class="event-text">275ª Sessão Extraordinária do Conselho</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">24/02</div>
+                            <div class="event-text">Reunião Online (Sala de Vídeo)</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">25–26/02</div>
+                            <div class="event-text">São Luís Gonzaga – Ação com Carreta</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">25/02</div>
+                            <div class="event-text">203ª Sessão Ordinária do Conselho Superior</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">26/02</div>
+                            <div class="event-text">Paço do Lumiar – Mutirão Pop Rua Jud (UBS Maiobão)</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">28/02</div>
+                            <div class="event-text">São Luís – Festival Cultural "Iemanjá, Rainha do Mar"</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====================== PAGE: PENDÊNCIAS ====================== -->
+            <section class="page" id="page-pendencias">
+                <div class="section-heading">
+                    <div class="section-eyebrow">Gestão de Riscos</div>
+                    <div class="section-title">Pendências e Riscos Ativos</div>
+                    <div class="section-sub">Itens que requerem ação prioritária da gestão</div>
+                </div>
+
+                <div class="highlight-box red">
+                    <div class="highlight-title">⚠️ Atenção Imediata – DOS</div>
+                    <p><strong>Capacitação de Usuários</strong> e <strong>Atualização de Formulários GLPI</strong> estão
+                        classificadas como "Em Risco" no Plano de Ação TI 2026. Nenhuma das duas foi iniciada.
+                        Recomenda-se definição imediata de responsáveis, cronograma e deliverables mínimos para o
+                        próximo bimestre.</p>
+                </div>
+
+                <div class="highlight-box gold">
+                    <div class="highlight-title">⏳ Pendências DIR – Continuidade Necessária</div>
+                    <p>Três frentes aguardam continuidade: instrução processual do <strong>Data Center Modular</strong>;
+                        etapas de implementação dos <strong>Servidores High-End</strong>; e
+                        planejamento e execução da <strong>Repatriação de Dados Serpro → on-premise</strong>. Estas
+                        ações impactam diretamente a soberania digital e a disponibilidade dos sistemas institucionais.
+                    </p>
+                </div>
+
+                <div class="highlight-box blue">
+                    <div class="highlight-title">📡 Atualização de Switches – 54 Núcleos Pendentes</div>
+                    <p>Apenas 15 dos 69 núcleos (21,7%) possuem o modelo TP-Link TL-SG3452, único gerenciável via Omada
+                        Controller. Os 54 núcleos restantes — com equipamentos Intelbras, D-Link e modelos TP-Link não
+                        compatíveis — precisam ser incluídos no planejamento orçamentário para substituição gradual.</p>
+                </div>
+
+                <div class="highlight-box teal">
+                    <div class="highlight-title">🔍 DAD – Monitoramento de Anomalias</div>
+                    <p>Inconsistências identificadas no processamento dos dados de contracheque da Intranet aguardam
+                        alinhamento com os setores envolvidos para mapeamento de códigos e regras de negócio. Risco de
+                        impacto
+                        direto na experiência dos servidores ao acessar o módulo.</p>
+                </div>
+
+                <div class="table-card mt">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">Registro Consolidado de Pendências</div>
+                        </div>
+                    </div>
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Divisão</th>
+                                    <th>Impacto</th>
+                                    <th>Prioridade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Capacitação de Usuários</strong></td>
+                                    <td>DOS</td>
+                                    <td>Adoção de sistemas e redução de chamados básicos</td>
+                                    <td><span class="badge red">Urgente</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Atualização Formulários GLPI</strong></td>
+                                    <td>DOS</td>
+                                    <td>Qualidade do registro e triagem de chamados</td>
+                                    <td><span class="badge red">Urgente</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Data Center Modular</strong></td>
+                                    <td>DIR</td>
+                                    <td>Continuidade e redundância de infraestrutura crítica</td>
+                                    <td><span class="badge red">Alta</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidores High-End</strong></td>
+                                    <td>DIR</td>
+                                    <td>Capacidade de processamento dos sistemas institucionais</td>
+                                    <td><span class="badge red">Alta</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Repatriação Dados Serpro</strong></td>
+                                    <td>DIR</td>
+                                    <td>Soberania de dados e independência de terceiros</td>
+                                    <td><span class="badge red">Alta</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Substituição Switches Legados (54 núcleos)</strong></td>
+                                    <td>DIR</td>
+                                    <td>Gerenciabilidade centralizada e segurança da malha</td>
+                                    <td><span class="badge gold">Média</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Correção Contracheque – Intranet</strong></td>
+                                    <td>DAD</td>
+                                    <td>Acurácia das informações para os servidores</td>
+                                    <td><span class="badge gold">Média</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Captive Portal – LGPD</strong></td>
+                                    <td>DIR</td>
+                                    <td>Conformidade legal no acesso Wi-Fi para visitantes</td>
+                                    <td><span class="badge gold">Média</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====================== PAGE: CONCLUSÃO ====================== -->
+            <section class="page" id="page-conclusao">
+                <div class="section-heading">
+                    <div class="section-eyebrow">Síntese e Diretrizes</div>
+                    <div class="section-title">Considerações Finais e Próximos Passos</div>
+                    <div class="section-sub">Avaliação consolidada do bimestre e planejamento para o próximo período
+                    </div>
+                </div>
+
+                <div class="conclusion-card">
+                    <div class="conclusion-title">Avaliação do Bimestre</div>
+                    <p class="conclusion-text">O primeiro bimestre de 2026 consolidou a Supervisão de Informática como
+                        protagonista na modernização tecnológica institucional da DPE-MA. A atuação integrada das três
+                        divisões resultou em entregas concretas que ampliam a capacidade operacional, fortalecem a
+                        segurança da informação e elevam a qualidade do atendimento prestado aos defensores públicos,
+                        servidores e ao cidadão maranhense. As métricas registradas traduzem o comprometimento técnico
+                        das equipes e a maturidade crescente dos processos de TI.</p>
+                    <div class="conclusion-cols">
+                        <div class="conclusion-col">
+                            <h4>Desenvolvimento</h4>
+                            <p>2 sistemas entregues em produção. 251 commits e 40.088 linhas de código alteradas em 5
+                                projetos ativos.</p>
+                        </div>
+                        <div class="conclusion-col">
+                            <h4>Infraestrutura</h4>
+                            <p>69 núcleos inventariados, 5 switches modernizados, 9 servidores com observabilidade
+                                proativa implantada.</p>
+                        </div>
+                        <div class="conclusion-col">
+                            <h4>Suporte</h4>
+                            <p>2.327 chamados resolvidos com TMA de 2 horas. Apoio tecnológico a 17 eventos
+                                institucionais no período.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <div>
+                            <div class="table-card-title">Próximos Passos Estratégicos</div>
+                            <div class="table-card-sub">Ações planejadas para o próximo período</div>
+                        </div>
+                    </div>
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Frente</th>
+                                    <th>Divisão</th>
+                                    <th>Ação Planejada</th>
+                                    <th>Prioridade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Kubernetes e Terraform</strong></td>
+                                    <td>DAD</td>
+                                    <td>Conclusão dos estudos e validação para implantação</td>
+                                    <td><span class="badge blue">Alta</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Portal Público – Estágio</strong></td>
+                                    <td>DAD</td>
+                                    <td>Desenvolvimento do site com FAQ e formulários</td>
+                                    <td><span class="badge gold">Média</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Data Center Modular</strong></td>
+                                    <td>DIR</td>
+                                    <td>Continuidade da instrução processual e aprovação</td>
+                                    <td><span class="badge red">Urgente</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servidores High-End</strong></td>
+                                    <td>DIR</td>
+                                    <td>Prosseguimento das etapas de implementação</td>
+                                    <td><span class="badge red">Urgente</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Repatriação Dados Serpro</strong></td>
+                                    <td>DIR</td>
+                                    <td>Planejamento técnico e início da execução</td>
+                                    <td><span class="badge red">Urgente</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Substituição Switches (54 núcleos)</strong></td>
+                                    <td>DIR</td>
+                                    <td>Inclusão no planejamento orçamentário 2026</td>
+                                    <td><span class="badge gold">Média</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Capacitação de Usuários</strong></td>
+                                    <td>DOS</td>
+                                    <td>Início imediato — iniciativa classificada Em Risco</td>
+                                    <td><span class="badge red">Urgente</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tabela de SLA e Organização N1</strong></td>
+                                    <td>DOS</td>
+                                    <td>Definição e implementação dos níveis de serviço</td>
+                                    <td><span class="badge gold">Média</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="text-align:center;padding:40px 0 20px;border-top:1px solid var(--border-l);margin-top:24px">
+                    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">Supervisão de
+                        Informática – DPE/MA</div>
+                    <div style="font-size:12px;color:var(--text-3)">Ricardo Corrêa Lemos · Chefe da Supervisão de
+                        Informática</div>
+                    <div style="font-size:11px;color:var(--text-3);margin-top:6px">Relatório Gerencial Consolidado ·
+                        Janeiro–Fevereiro 2026 · Documento de Uso Interno</div>
+                </div>
+            </section>
+
+        </main><!-- /.page-body -->
+    </div><!-- /.main-content -->
+
+    <script src="script.js"></script>
+    <script>
+        // ============================================================
+        //  CHART.JS SETUP
+        // ============================================================
+        Chart.defaults.font.family = "'Outfit', system-ui, sans-serif";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = '#6E7A8A';
+
+        const C = {
+            navy: '#0F2D50',
+            blue: '#2560A8',
+            emerald: '#1E7A48',
+            gold: '#B07D0A',
+            amber: '#D4580E',
+            red: '#B22828',
+            teal: '#0E6E7E',
+            purple: '#5B3FA6',
+            navy2: '#1B3A5C',
+        };
+
+        const GRID_COLOR = 'rgba(0,0,0,0.05)';
+
+        function mkBar(id, labels, datasets, opts = {}) {
+            const ctx = document.getElementById(id);
+            if (!ctx || ctx._chartInst) return;
+            ctx._chartInst = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } }, tooltip: { ...opts.tooltip } },
+                    scales: {
+                        x: { ...(opts.stacked ? { stacked: true } : {}), grid: { display: false }, ticks: { maxRotation: 35 } },
+                        y: { ...(opts.stacked ? { stacked: true } : {}), grid: { color: GRID_COLOR }, beginAtZero: true, ...(opts.yMax ? { max: opts.yMax } : {}) }
+                    },
+                    ...opts.extra
+                }
+            });
+        }
+
+        function mkBarH(id, labels, data, colors) {
+            const ctx = document.getElementById(id);
+            if (!ctx || ctx._chartInst) return;
+            ctx._chartInst = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4 }] },
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: GRID_COLOR }, beginAtZero: true },
+                        y: { grid: { display: false }, ticks: { font: { family: "'JetBrains Mono', monospace", size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function mkDonut(id, labels, data, colors) {
+            const ctx = document.getElementById(id);
+            if (!ctx || ctx._chartInst) return;
+            ctx._chartInst = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }] },
+                options: {
+                    cutout: '65%', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } } }
+                }
+            });
+        }
+
+        const chartsInited = new Set();
+
+        function initChartsForPage(pageId) {
+            if (chartsInited.has(pageId)) return;
+            chartsInited.add(pageId);
+
+            if (pageId === 'dashboard') {
+                mkBar('c_glpiOverview',
+                    ['Janeiro', 'Fevereiro'],
+                    [
+                        { label: 'Abertos', data: [1879, 1448], backgroundColor: C.navy, borderRadius: 4 },
+                        { label: 'Solucionados', data: [1236, 1091], backgroundColor: C.emerald, borderRadius: 4 },
+                        { label: 'Postergados', data: [640, 357], backgroundColor: C.amber, borderRadius: 4 }
+                    ]
+                );
+
+                mkBarH('c_commits',
+                    ['sso-defensoria-frontend', 'gest-estagios-frontend', 'intranet-backend', 'gest-estagios-backend', 'jvd-front'],
+                    [88, 63, 53, 46, 1],
+                    [C.navy, C.emerald, C.teal, C.gold, '#AAB0BC']
+                );
+
+                mkBar('c_contratos',
+                    ['Impressoras', 'PCaaS Contrato Voke', 'PCaaS Contrato Lebre', 'Telefonia'],
+                    [
+                        { label: 'Abertos', data: [180, 2, 215, 63], backgroundColor: C.navy, borderRadius: 4 },
+                        { label: 'Resolvidos', data: [180, 2, 192, 39], backgroundColor: C.emerald, borderRadius: 4 }
+                    ]
+                );
+
+                mkDonut('c_conformidade',
+                    ['TL-SG3452 (Omada)', 'TP-Link outros', 'Intelbras', 'D-Link', 'Mistos'],
+                    [15, 22, 20, 10, 2],
+                    [C.emerald, C.blue, C.red, C.gold, C.purple]
+                );
+            }
+
+            if (pageId === 'dad') {
+                mkBarH('c_commitsDAD',
+                    ['sso-defensoria-frontend', 'gest-estagios-frontend', 'intranet-backend', 'gest-estagios-backend', 'jvd-front'],
+                    [88, 63, 53, 46, 1],
+                    [C.navy, C.emerald, C.teal, C.gold, '#AAB0BC']
+                );
+                mkBarH('c_linhas',
+                    ['sso-defensoria-frontend', 'gest-estagios-frontend', 'gest-estagios-backend', 'intranet-backend', 'jvd-front'],
+                    [15110, 14083, 8316, 2539, 40],
+                    [C.navy, C.emerald, C.gold, C.teal, '#AAB0BC']
+                );
+            }
+
+            if (pageId === 'dir') {
+                const ctxObs = document.getElementById('c_observabilidade');
+                if (ctxObs && !ctxObs._chartInst) {
+                    ctxObs._chartInst = new Chart(ctxObs, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Monit. Access Points', 'Monit. Servidores', 'Monit. Serv. Ext./Int.'],
+                            datasets: [
+                                { label: 'Concluído (%)', data: [100, 90, 75], backgroundColor: [C.emerald, C.teal, C.gold], borderRadius: 4 },
+                                { label: 'Pendente (%)', data: [0, 10, 25], backgroundColor: ['#E5F7ED', '#E0F4F6', '#FDF5E0'], borderRadius: 4 }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: c => ` ${c.raw}%` } } },
+                            scales: {
+                                x: { stacked: true, max: 100, grid: { color: GRID_COLOR }, ticks: { callback: v => v + '%' } },
+                                y: { stacked: true, grid: { display: false } }
+                            }
+                        }
+                    });
+                }
+
+                mkDonut('c_fabricantes',
+                    ['Intelbras', 'TL-SG3452', 'TL-SG1048', 'D-Link', 'Outros'],
+                    [20, 15, 19, 10, 5],
+                    [C.navy, C.emerald, C.blue, C.gold, C.purple]
+                );
+
+                mkDonut('c_omada',
+                    ['Padrão Omada', 'Necessitam atualização'],
+                    [15, 54],
+                    [C.emerald, C.red]
+                );
+            }
+
+            if (pageId === 'dos') {
+                mkBar('c_glpiMensal',
+                    ['Janeiro', 'Fevereiro'],
+                    [
+                        { label: 'Abertos', data: [1879, 1448], backgroundColor: C.navy, borderRadius: 4 },
+                        { label: 'Solucionados', data: [1236, 1091], backgroundColor: C.emerald, borderRadius: 4 },
+                        { label: 'Postergados', data: [640, 357], backgroundColor: C.amber, borderRadius: 4 }
+                    ]
+                );
+
+                const ctxRes = document.getElementById('c_resolucao');
+                if (ctxRes && !ctxRes._chartInst) {
+                    ctxRes._chartInst = new Chart(ctxRes, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Janeiro', 'Fevereiro'],
+                            datasets: [
+                                { label: 'Solucionados', data: [65.8, 75.3], backgroundColor: C.emerald, borderRadius: 4 },
+                                { label: 'Postergados', data: [34.2, 24.7], backgroundColor: C.amber, borderRadius: 4 }
+                            ]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: c => ` ${c.raw}%` } } },
+                            scales: {
+                                x: { stacked: true, grid: { display: false } },
+                                y: { stacked: true, max: 100, grid: { color: GRID_COLOR }, ticks: { callback: v => v + '%' } }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        // ============================================================
+        //  ANIMATE PROGRESS BARS
+        // ============================================================
+        function animateBars() {
+            setTimeout(() => {
+                document.querySelectorAll('.bar-fill').forEach(bar => {
+                    const w = bar.style.width;
+                    bar.style.width = '0';
+                    requestAnimationFrame(() => { setTimeout(() => { bar.style.width = w; }, 30); });
+                });
+            }, 100);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initChartsForPage('dashboard');
+            animateBars();
+
+            // Close sidebar on Escape
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+        });
+    </script>
+</body>
+
+</html>
