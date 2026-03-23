@@ -56,10 +56,7 @@
                 <span class="nav-icon">🖥️</span>
                 <span>Sistemas</span>
             </a>
-            <a class="nav-item" onclick="showPage('colaboradores',this)">
-                <span class="nav-icon">👥</span>
-                <span>Colaboradores</span>
-            </a>
+
 
             <div class="nav-section-label">Divisões</div>
             <a class="nav-item" onclick="showPage('dad',this)">
@@ -69,7 +66,7 @@
                         <polyline points="16 18 22 12 16 6"></polyline>
                         <polyline points="8 6 2 12 8 18"></polyline>
                     </svg></span>
-                <span>Análise e Desenvolvimento</span>
+                <span>Análise e Desenvolvimento de Sistemas</span>
                 <span class="nav-badge">251</span>
             </a>
             <a class="nav-item" onclick="showPage('dir',this)">
@@ -170,7 +167,7 @@
                     <div class="pillar-card">
                         <div class="pillar-number">Divisão 01</div>
                         <div class="pillar-icon-row">💻</div>
-                        <div class="pillar-card-title">DAD – Análise e Desenvolvimento</div>
+                        <div class="pillar-card-title">DAD – Análise e Desenvolvimento de Sistemas</div>
                         <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">Responsável pela
                             criação e manutenção dos sistemas institucionais.</p>
                         <ul class="pillar-list">
@@ -254,6 +251,85 @@
                                 </li>
                             </ul>
                         </div>
+                    </div>
+                </div>
+
+                <div class="section-heading" style="margin-top:24px; margin-bottom:12px">
+                    <div class="section-title">Estrutura Organizacional</div>
+                    <div class="section-sub">Profissionais dedicados à modernização tecnológica da DPE-MA</div>
+                </div>
+
+                <div class="profile-grid">
+                    <div class="profile-card">
+                        <div class="profile-image-container">
+                            <div class="profile-initials">RL</div>
+                        </div>
+                        <div class="profile-info">
+                            <h3>Ricardo Correa Lemos</h3>
+                            <p>Supervisor de Informática (SUINFO)</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-image-container"
+                            style="background: linear-gradient(135deg, var(--teal), var(--emerald));">
+                            <div class="profile-initials">GH</div>
+                        </div>
+                        <div class="profile-info">
+                            <h3>Gustavo Henrique Vieira Sousa Silva</h3>
+                            <p>Assessoria da Supervisão de Informática (SUINFO)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-heading" style="margin-bottom:12px">
+                    <div class="section-eyebrow">Lideranças por Divisão</div>
+                </div>
+
+                <div class="kpi-grid cols-3">
+                    <div class="kpi-card clickable" onclick="filterTeam('DAD')" data-div="DAD"
+                        style="--kpi-color:var(--teal)">
+                        <div class="kpi-label">Responsável DAD</div>
+                        <div class="kpi-value" style="font-family: inherit; font-size: 1.1rem;">João Carlos R. Ribeiro
+                        </div>
+                        <div class="kpi-sub">Análise e Desenvolvimento de Sistemas</div>
+                    </div>
+                    <div class="kpi-card clickable" onclick="filterTeam('DIR')" data-div="DIR"
+                        style="--kpi-color:var(--emerald)">
+                        <div class="kpi-label">Responsável DIR</div>
+                        <div class="kpi-value" style="font-family: inherit; font-size: 1.1rem;">Felipe Dias Corrêa</div>
+                        <div class="kpi-sub">Infraestrutura e Redes</div>
+                    </div>
+                    <div class="kpi-card clickable" onclick="filterTeam('DOS')" data-div="DOS"
+                        style="--kpi-color:var(--blue)">
+                        <div class="kpi-label">Responsável DOS</div>
+                        <div class="kpi-value" style="font-family: inherit; font-size: 1.1rem;">Ronilson Costa</div>
+                        <div class="kpi-sub">Operação e Suporte</div>
+                    </div>
+                </div>
+
+                <div class="section-heading"
+                    style="margin-top:24px; margin-bottom:12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div class="section-eyebrow">Integrantes e Colaboradores</div>
+                    </div>
+                    <button class="filter-chip" id="clearTeamFilter" onclick="filterTeam('ALL')"
+                        style="display: none; cursor: pointer;">Limpar Filtro ✖</button>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-scroll-wrap">
+                        <table class="resp">
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Divisão</th>
+                                    <th>Especialidade / Responsabilidade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="team-table-body">
+                                <!-- Preenchido dinamicamente via JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -346,112 +422,7 @@
                 </div>
             </section>
 
-            <!-- ====================== PAGE: COLABORADORES ====================== -->
-            <section class="page" id="page-colaboradores">
-                <div class="section-heading">
-                    <div class="section-eyebrow">Capital Humano · SUINFO</div>
-                    <div class="section-title">Nossa Equipe</div>
-                    <div class="section-sub">Profissionais dedicados à modernização tecnológica da DPE-MA</div>
-                </div>
 
-                <div class="highlight-box blue"
-                    style="margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
-                    <span style="font-size: 2rem;">👤</span>
-                    <div>
-                        <div class="highlight-title" style="margin: 0;">Ricardo Correa Lemos</div>
-                        <div style="font-size: 0.9rem; opacity: 0.8;">Supervisor de Informática (SUINFO)</div>
-                    </div>
-                </div>
-
-                <div class="section-heading" style="margin-bottom:12px">
-                    <div class="section-eyebrow">Lideranças por Divisão</div>
-                </div>
-
-                <div class="kpi-grid cols-3">
-                    <div class="kpi-card" style="--kpi-color:var(--teal)">
-                        <div class="kpi-label">Responsável DAD</div>
-                        <div class="kpi-value" style="font-family: inherit; font-size: 1.1rem;">João Carlos R. Ribeiro
-                        </div>
-                        <div class="kpi-sub">Análise e Desenvolvimento</div>
-                    </div>
-                    <div class="kpi-card" style="--kpi-color:var(--emerald)">
-                        <div class="kpi-label">Responsável DIR</div>
-                        <div class="kpi-value" style="font-family: inherit; font-size: 1.1rem;">Felipe Dias Corrêa</div>
-                        <div class="kpi-sub">Infraestrutura e Redes</div>
-                    </div>
-                    <div class="kpi-card" style="--kpi-color:var(--blue)">
-                        <div class="kpi-label">Responsável DOS</div>
-                        <div class="kpi-value" style="font-family: inherit; font-size: 1.1rem;">Ronilson Costa</div>
-                        <div class="kpi-sub">Operação e Suporte</div>
-                    </div>
-                </div>
-
-                <div class="section-heading" style="margin-top:24px; margin-bottom:12px">
-                    <div class="section-eyebrow">Integrantes e Colaboradores</div>
-                </div>
-
-                <div class="table-card">
-                    <div class="table-scroll-wrap">
-                        <table class="resp">
-                            <thead>
-                                <tr>
-                                    <th>Colaborador</th>
-                                    <th>Divisão</th>
-                                    <th>Especialidade / Responsabilidade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Gabriel Pereira Gomes</strong></td>
-                                    <td><span class="badge blue">DIR</span></td>
-                                    <td>Segurança Perimetral e Firewall</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Paulo Almeida</strong></td>
-                                    <td><span class="badge teal">DAD</span></td>
-                                    <td>Desenvolvimento Fullstack</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Luis Silva</strong></td>
-                                    <td><span class="badge teal">DAD</span></td>
-                                    <td>Frontend e UI/UX</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Reginaldo Marques</strong></td>
-                                    <td><span class="badge blue">DIR</span></td>
-                                    <td>Sustentação de Infra Crítica</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Lucas David Jesus</strong></td>
-                                    <td><span class="badge blue">DIR</span></td>
-                                    <td>Redes e Conectividade Wi-Fi</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Victor Coelho Silva</strong></td>
-                                    <td><span class="badge blue">DIR</span></td>
-                                    <td>Observabilidade (Zabbix/Grafana)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Leonardo Vasconselos</strong></td>
-                                    <td><span class="badge teal">DAD</span></td>
-                                    <td>Desenvolvimento Mobile/Web</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Magno Ribeiro</strong></td>
-                                    <td><span class="badge teal">DAD</span></td>
-                                    <td>Backend e APIs</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Vinicius Caldas</strong></td>
-                                    <td><span class="badge teal">DAD</span></td>
-                                    <td>Suporte a Sistemas e SEI</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </section>
 
             <!-- ====================== PAGE: DASHBOARD ====================== -->
             <section class="page" id="page-dashboard">
@@ -635,7 +606,7 @@
             <!-- ====================== PAGE: DAD ====================== -->
             <section class="page" id="page-dad">
                 <div class="section-heading">
-                    <div class="section-eyebrow">DAD · Divisão de Análise e Desenvolvimento</div>
+                    <div class="section-eyebrow">DAD · Divisão de Análise e Desenvolvimento de Sistemas</div>
                     <div class="section-title">Desenvolvimento de Sistemas</div>
                     <div class="section-sub">Chefe: João Carlos Rodrigues Ribeiro &nbsp;·&nbsp; 01/01 – 25/02/2026</div>
                 </div>
@@ -648,7 +619,7 @@
                             <polyline points="8 6 2 12 8 18"></polyline>
                         </svg></div>
                     <div>
-                        <div class="division-flag-name">DAD – Divisão de Análise e Desenvolvimento</div>
+                        <div class="division-flag-name">DAD – Divisão de Análise e Desenvolvimento de Sistemas</div>
                         <div class="division-flag-chief">Chefe: João Carlos Rodrigues Ribeiro &nbsp;·&nbsp; Equipe: 7
                             colaboradores</div>
                     </div>
@@ -873,7 +844,7 @@
                 <div class="section-heading" style="margin-bottom:12px">
                     <div class="section-eyebrow">Pilares Estratégicos</div>
                 </div>
-                <div class="pillar-grid">
+                <div class="pillar-grid cols-4">
                     <div class="pillar-card">
                         <div class="pillar-number">Pilar 01</div>
                         <div class="pillar-icon-row">🛡️</div>
@@ -1655,10 +1626,8 @@
                 <div style="text-align:center;padding:40px 0 20px;border-top:1px solid var(--border-l);margin-top:24px">
                     <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">Supervisão de
                         Informática – DPE/MA</div>
-                    <div style="font-size:12px;color:var(--text-3)">Ricardo Corrêa Lemos · Chefe da Supervisão de
-                        Informática</div>
                     <div style="font-size:11px;color:var(--text-3);margin-top:6px">Relatório Gerencial Consolidado ·
-                        Janeiro–Fevereiro 2026 · Documento de Uso Interno</div>
+                        Documento de Uso Interno</div>
                 </div>
             </section>
 

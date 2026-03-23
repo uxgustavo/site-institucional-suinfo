@@ -1057,17 +1057,32 @@ table.resp td strong {
 /* ============================================================
    BADGES
    ============================================================ */
+/* No seu style.css */
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 3px 9px;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 12px;
+    /* Espaçamento interno fixo */
+    min-width: 60px;
+    /* Garante que DAD, DIR e DOS tenham a mesma largura */
     border-radius: 6px;
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    white-space: nowrap;
+}
+
+/* Padronização do ponto colorido (bullet) */
+.badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    /* O ponto assume a cor do texto do badge */
+    flex-shrink: 0;
 }
 
 .badge.green {
@@ -1111,6 +1126,15 @@ table.resp td strong {
     height: 5px;
     border-radius: 50%;
     background: currentColor;
+}
+
+.badge.emerald {
+    background: #E5F7ED;
+    color: #1E7A48;
+}
+
+.badge.emerald::before {
+    background: #1E7A48;
 }
 
 /* ============================================================
@@ -1543,6 +1567,27 @@ table.resp td strong {
     .chart-grid.cols-3 {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    .pillar-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 20px;
+    }
+
+    @media (min-width: 1024px) {
+        /* A regra padrão da sua HOME continuará sendo a original (3 colunas) */
+
+        /* Esta é a NOVA regra que só afeta a DIR (4 colunas) */
+        .pillar-grid.cols-4 {
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 16px;
+            /* Espaçamento ligeiramente menor para não espremer os cards */
+        }
+
+        /* Opcional: Diminui um pouco o padding interno para caber mais texto em 4 colunas */
+        .pillar-grid.cols-4 .pillar-card {
+            padding: 16px;
+        }
+    }
 }
 
 /* ── XLarge (≥1280px) ── */
@@ -1654,6 +1699,110 @@ table.resp td strong {
 
 .pillar-card:nth-child(4) {
     animation-delay: 0.26s;
+}
+
+/* ============================================================
+   PROFILE CARDS
+   ============================================================ */
+.profile-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+    .profile-grid {
+        flex-direction: row;
+        justify-content: center;
+        /* Centraliza os cards horizontalmente */
+        gap: 24px;
+    }
+
+    .profile-card {
+        /* Em vez de flex: 1, definimos uma largura fixa proporcional */
+        width: 100%;
+        max-width: 400px;
+        /* Impede que o card fique gigante em telas grandes */
+    }
+}
+
+.profile-card {
+    background: var(--surface);
+    border: 1px solid var(--border-l);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: transform var(--tr), box-shadow var(--tr);
+}
+
+.profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.profile-image-container {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--blue), var(--navy));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--surface);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-initials {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFF;
+}
+
+.profile-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+}
+
+.profile-info p {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* ============================================================
+   CLICKABLE KPI CARD FILTER
+   ============================================================ */
+.kpi-card.clickable {
+    cursor: pointer;
+    transition: transform var(--tr), box-shadow var(--tr), border-color var(--tr);
+}
+
+.kpi-card.clickable:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--kpi-color);
+}
+
+.kpi-card.active-filter {
+    border-color: var(--kpi-color);
+    box-shadow: 0 0 0 2px var(--kpi-color);
+}
+
+.kpi-card.active-filter .kpi-glow {
+    opacity: 0.15;
 }
 
 /* ============================================================
