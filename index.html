@@ -337,88 +337,32 @@
 
             <!-- ====================== PAGE: SISTEMAS ====================== -->
             <section class="page" id="page-sistemas">
-                <div class="section-heading">
-                    <div class="section-eyebrow">Catálogo de Soluções · SUINFO</div>
-                    <div class="section-title">Sistemas Gerenciados</div>
-                    <div class="section-sub">Ecossistema de software da Defensoria Pública do Estado do Maranhão</div>
+                <div class="section-heading"
+                    style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <div class="section-eyebrow">Catálogo de Soluções · SUINFO</div>
+                        <div class="section-title">Sistemas Gerenciados</div>
+                        <div class="section-sub">Ecossistema de software da Defensoria Pública do Estado do Maranhão
+                        </div>
+                    </div>
+                    <div class="search-wrap" style="position: relative; flex: 1; min-width: 250px; max-width: 350px;">
+                        <span
+                            style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); display: flex; opacity: 0.6;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"
+                                fill="var(--navy)">
+                                <path
+                                    d="M10 2a8 8 0 1 0 5.293 14.707l5 5a1 1 0 0 0 1.414-1.414l-5-5A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4z" />
+                            </svg>
+                        </span>
+                        <input type="text" id="searchSistemas" placeholder="Pesquisar sistema..."
+                            style="width: 100%; padding: 10px 14px 10px 36px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; background: var(--surface); color: var(--text); outline: none; transition: border-color var(--tr);"
+                            onfocus="this.style.borderColor='var(--blue)'"
+                            onblur="this.style.borderColor='var(--border)'">
+                    </div>
                 </div>
 
-                <div class="kpi-grid cols-2">
-                    <!-- SAGAP -->
-                    <div class="table-card" style="padding: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h3 style="color: var(--navy); margin: 0;">SAGAP</h3>
-                            <span class="badge green">Em Produção</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-2);">Sistema Online de Atendimento, Geração e
-                            Acompanhamento Processual. Principal ferramenta de atendimento ao assistido.</p>
-                        <hr style="border: 0; border-top: 1px solid var(--border-l); margin: 12px 0;">
-                        <div style="font-size: 0.85rem; color: var(--text-3);">Responsável: DAD · Linguagem: Java/Web
-                        </div>
-                    </div>
-                    <!-- SEI -->
-                    <div class="table-card" style="padding: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h3 style="color: var(--navy); margin: 0;">SEI</h3>
-                            <span class="badge blue">Implementado</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-2);">Sistema Eletrônico de Informações. Gestão
-                            eletrônica de documentos e processos administrativos.</p>
-                        <hr style="border: 0; border-top: 1px solid var(--border-l); margin: 12px 0;">
-                        <div style="font-size: 0.85rem; color: var(--text-3);">Responsável: SUINFO (Gestão) · Órgão:
-                            TRF-4</div>
-                    </div>
-                    <!-- SIAPD -->
-                    <div class="table-card" style="padding: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h3 style="color: var(--navy); margin: 0;">SIAPD</h3>
-                            <span class="badge green">Em Produção</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-2);">Sistema de Acompanhamento de Presos
-                            Provisórios e Definitivos. Referência em outros estados.</p>
-                        <hr style="border: 0; border-top: 1px solid var(--border-l); margin: 12px 0;">
-                        <div style="font-size: 0.85rem; color: var(--text-3);">Responsável: DAD · Foco: Penal</div>
-                    </div>
-                    <!-- NovoSGA -->
-                    <div class="table-card" style="padding: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h3 style="color: var(--navy); margin: 0;">NovoSGA</h3>
-                            <span class="badge gold">Em Validação</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-2);">Sistema de Gerenciamento de Atendimento.
-                            Controle de filas e gestão de fluxo presencial nos núcleos.</p>
-                        <hr style="border: 0; border-top: 1px solid var(--border-l) ; margin: 12px 0;">
-                        <div style="font-size: 0.85rem; color: var(--text-3);">Responsável: DAD/DOS · ISO 9001</div>
-                    </div>
-                    <!-- Intranet -->
-                    <div class="table-card" style="padding: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h3 style="color: var(--navy); margin: 0;">Intranet</h3>
-                            <span class="badge green">Atualizado</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-2);">Portal interno de comunicação e serviços
-                            (Contracheque, Eventos, Publicações e Documentos).</p>
-                        <hr style="border: 0; border-top: 1px solid var(--border-l); margin: 12px 0;">
-                        <div style="font-size: 0.85rem; color: var(--text-3);">Responsável: DAD · PHP/Laravel</div>
-                    </div>
-                    <!-- Portal de Estágio -->
-                    <div class="table-card" style="padding: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h3 style="color: var(--navy); margin: 0;">Portal de Estágio</h3>
-                            <span class="badge teal">Expansão</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-2);">Gestão de certificados, declarações e
-                            comunicações para estagiários e site público.</p>
-                        <hr style="border: 0; border-top: 1px solid var(--border-l); margin: 12px 0;">
-                        <div style="font-size: 0.85rem; color: var(--text-3);">Responsável: Equipe DAD · Node/React
-                        </div>
-                    </div>
+                <div class="kpi-grid cols-2" id="systems-grid">
+                    <!-- Preenchido dinamicamente via JS -->
                 </div>
             </section>
 
